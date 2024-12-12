@@ -1,10 +1,33 @@
 import "./App.css";
 import Confetti from "./Confetti";
+import React, { useState } from 'react';
 
 const shareMessage = "I just ran my first container using Docker";
 const shareLink = "https://docker.com/";
 
 const App = () => {
+
+  const [text, setText] = useState('');
+  const [submittedText, setSubmittedText] = useState('');
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setSubmittedText(text);
+    setText('');
+
+    // If you want to send the text to a server, you can use fetch here
+    // For example:
+    fetch('https://api.example.com/submit', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ text }),
+    })
+      .then(response => response.json())
+      .then(data => console.log(data))
+      .catch((error) => console.error('Error:', error));
+  };
   return (
     <div className="App">
       <Confetti />
@@ -50,6 +73,26 @@ const App = () => {
           >
             {" "}
           </a>
+        </div>
+        <div>
+          <h1>Text Submission App</h1>
+          <form onSubmit={handleSubmit}>
+          <textarea
+              value={text}
+              onChange={(e) => setText(e.target.value)}
+              placeholder="Enter your text here"
+              rows="4"
+              cols="50"
+          />
+            <br />
+            <button type="submit">Submit</button>
+          </form>
+          {submittedText && (
+              <div>
+                <h2>Submitted Text:</h2>
+                <p>{submittedText}</p>
+              </div>
+          )}
         </div>
       </header>
     </div>
